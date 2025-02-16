@@ -1,26 +1,40 @@
-// Форма замовлення квітів
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
 import RadioGroup from "./RadioGroup";
 
-export default function OrderForm() {
-  const [name, setName] = useState(""); // Ім'я користувача
-  const [color, setColor] = useState(""); // Вибір кольору
-  const [priceRange, setPriceRange] = useState(""); // Вибір цінового діапазону
-  const [orderInfo, setOrderInfo] = useState(""); // Результат замовлення
+interface OrderFormFragmentProps {
+  setOrderInfo: (info: string) => void;
+  setClearForm: (clearFunction: () => void) => void;
+}
+
+export default function OrderFormFragment({
+  setOrderInfo,
+  setClearForm,
+}: OrderFormFragmentProps) {
+  const [name, setName] = useState("");
+  const [color, setColor] = useState("");
+  const [priceRange, setPriceRange] = useState("");
 
   const handleSubmit = () => {
-    // Перевірка на заповненість усіх полів
     if (!name || !color || !priceRange) {
       Alert.alert("Помилка", "Будь ласка, заповніть всі поля!");
       return;
     }
 
-    // Формування інформації про замовлення
     setOrderInfo(
-      `Замовлення для : ${name}\nКолір: ${color}\nЦіна: ${priceRange}`
+      `Замовлення для: ${name}\nКолір: ${color}\nЦіна: ${priceRange}`
     );
   };
+
+  const clearForm = () => {
+    setName("");
+    setColor("");
+    setPriceRange("");
+  };
+
+  useEffect(() => {
+    setClearForm(clearForm);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -46,36 +60,19 @@ export default function OrderForm() {
         onSelect={setPriceRange}
       />
 
-      {/* Кнопка для підтвердження замовлення */}
       <Button title="ОК" onPress={handleSubmit} />
-
-      {/* Відображення інформації про замовлення */}
-      {orderInfo ? <Text style={styles.result}>{orderInfo}</Text> : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    padding: 10,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginVertical: 5,
-  },
+  container: { width: "100%", padding: 10 },
+  label: { fontSize: 16, fontWeight: "bold", marginVertical: 5 },
   input: {
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 5,
     padding: 10,
     marginBottom: 10,
-  },
-  result: {
-    marginTop: 10,
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "green",
   },
 });
